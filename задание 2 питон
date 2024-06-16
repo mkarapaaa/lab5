@@ -1,0 +1,47 @@
+import numpy as np
+
+xi = np.array([0.1*np.pi, 0.2*np.pi, 0.3*np.pi, 0.4*np.pi])
+
+Ui = np.cos(xi)
+
+def divided_diff(x, y):
+    n = len(x)
+    coef = np.zeros([n, n])
+    coef[:,0] = y
+    for j in range(1,n):
+        for i in range(n-j):
+            coef[i][j] = (coef[i+1][j-1] - coef[i][j-1]) / (x[i+j]-x[i])
+    return coef[0]
+
+def newton_interpolation(x, xi, yi):
+    n = len(xi)
+    p = np.zeros_like(x)
+    coef = divided_diff(xi, yi)
+    for i in range(n):
+        term = coef[i]
+        for j in range(i):
+            term *= (x - xi[j])
+        p += term
+    return p
+
+
+def interpolation_error(x_star, xi, yi):
+    n = len(xi)
+    error = 0
+    for i in range(n):
+        term = 1
+        for j in range(n):
+            if j != i:
+                term *= (x_star - xi[j])
+        error += term
+    return abs(error)
+
+x_star = 0.25*np.pi
+
+x_values = np.linspace(0.1*np.pi, 0.4*np.pi, 100)
+p = newton_interpolation(x_values, xi, Ui)
+
+error = interpolation_error(x_star, xi, Ui)
+
+print("Интерполяционные многочлены Ньютона:", p)
+print("Значение погрешности интерполяции в точке x* =", x_star, ":", error)
