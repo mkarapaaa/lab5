@@ -1,0 +1,38 @@
+#include <iostream>
+#include <cmath>
+
+using namespace std;
+
+int main() {
+    //исходные данные
+    double x[] = {-1.0, 0.0, 1.0, 2.0, 3.0, 4.0};
+    double y[] = {-0.5, 0.0, 0.5, 0.86603, 1.0, 0.86603};
+    int n = 6; // Количество точек
+
+    // коэффициенты для многочлена первой степени
+    double sum_x = 0, sum_y = 0, sum_x2 = 0, sum_xy = 0;
+    for (int i = 0; i < n; i++) {
+        sum_x += x[i];
+        sum_y += y[i];
+        sum_x2 += x[i] * x[i];
+        sum_xy += x[i] * y[i];
+    }
+    double a1 = (n * sum_xy - sum_x * sum_y) / (n * sum_x2 - sum_x * sum_x);
+    double a0 = (sum_y - a1 * sum_x) / n;
+
+    // коэффициенты для многочлена второй степени
+    double sum_x3 = 0, sum_x4 = 0;
+    for (int i = 0; i < n; i++) {
+        sum_x3 += x[i] * x[i] * x[i];
+        sum_x4 += x[i] * x[i] * x[i] * x[i];
+    }
+    double det = n * sum_x2 * sum_x4 - n * sum_x3 * sum_x3 - sum_x * sum_x * sum_x4 + 2 * sum_x * sum_x3 * sum_x - sum_x2 * sum_x2 * sum_x;
+    double b2 = (n * sum_xy * sum_x4 - n * sum_y * sum_x3 - sum_x * sum_xy * sum_x3 + sum_x * sum_y * sum_x4 + sum_x2 * sum_xy * sum_x - sum_x2 * sum_y * sum_x3) / det;
+    double b1 = (n * sum_xy * sum_x2 - n * sum_y * sum_x - sum_x * sum_xy * sum_x + sum_x * sum_y * sum_x2 - sum_x2 * sum_xy + sum_x2 * sum_y) / det;
+    double b0 = (sum_y - b1 * sum_x - b2 * sum_x2) / n;
+
+    cout << "Многочлен первой степени: y = " << a0 << " + " << a1 << "x" << endl;
+    cout << "Многочлен второй степени: y = " << b0 << " + " << b1 << "x + " << b2 << "x^2" << endl;
+
+    return 0;
+}
